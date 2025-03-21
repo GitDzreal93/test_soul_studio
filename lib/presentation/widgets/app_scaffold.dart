@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_soul_app/config/themes.dart';
 import 'sidebar.dart';
 import 'app_header.dart';
 
 class AppScaffold extends StatelessWidget {
-  final Widget body;
-  final String? title;
+  final String title;
   final List<Widget>? actions;
+  final Widget body;
   final bool showBackButton;
   final bool resizeToAvoidBottomInset;
 
   const AppScaffold({
     super.key,
-    required this.body,
-    this.title,
+    required this.title,
     this.actions,
+    required this.body,
     this.showBackButton = false,
     this.resizeToAvoidBottomInset = true,
   });
@@ -29,21 +30,46 @@ class AppScaffold extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                AppHeader(
-                  title: title,
-                  actions: actions,
-                  showBackButton: showBackButton,
-                ),
-                Expanded(
-                  child: Container(
-                    color: AppTheme.backgroundColor,
-                    padding: const EdgeInsets.all(AppTheme.contentPadding),
-                    child: body,
-                  ),
-                ),
+                _buildAppBar(context),
+                Expanded(child: body),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      height: 64.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          if (showBackButton)
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          if (actions != null) ...actions!,
         ],
       ),
     );
