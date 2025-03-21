@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:test_soul_app/config/themes.dart';
-import 'package:test_soul_app/presentation/screens/home/home_screen.dart';
 import 'package:test_soul_app/config/routes.dart';
+import 'package:test_soul_app/config/themes.dart';
+import 'package:test_soul_app/providers/theme_provider.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:window_size/window_size.dart' as window_size;
@@ -48,20 +48,23 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    
     return ScreenUtilInit(
-      // 修改设计稿尺寸为1:1
-      designSize: const Size(1000, 1000),
+      designSize: const Size(1024, 768),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          title: '测试工具',
+          title: 'Test Soul App',
           theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
           initialRoute: Routes.home,
           onGenerateRoute: Routes.onGenerateRoute,
           debugShowCheckedModeBanner: false,

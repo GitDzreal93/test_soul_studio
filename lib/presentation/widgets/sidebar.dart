@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_soul_app/config/routes.dart';
+import 'package:test_soul_app/config/themes.dart';
+import 'package:test_soul_app/providers/theme_provider.dart';
 
-class SideBar extends StatefulWidget {
+class SideBar extends ConsumerStatefulWidget {
   const SideBar({super.key});
 
   @override
-  State<SideBar> createState() => _SideBarState();
+  ConsumerState<SideBar> createState() => _SideBarState();
 }
 
-class _SideBarState extends State<SideBar> with RouteAware {
+class _SideBarState extends ConsumerState<SideBar> with RouteAware {
   static bool _isExpandedStatic = false;  // 使用静态变量保存展开状态
   String _currentRoute = '/';
 
@@ -60,14 +63,17 @@ class _SideBarState extends State<SideBar> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = ref.watch(themeProvider) == ThemeMode.dark;
+
     return Stack(
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutQuart,
-          width: _isExpandedStatic ? 200.w : 64.w,
+          width: _isExpandedStatic ? 180.w : 60.w,
           decoration: BoxDecoration(
-            color: const Color(0xFF1A202C),
+            color: theme.colorScheme.surface,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -78,18 +84,18 @@ class _SideBarState extends State<SideBar> with RouteAware {
           ),
           child: Column(
             children: [
-              SizedBox(height: 16.h),
+              SizedBox(height: 12.h),
               Expanded(
                 child: ListView.builder(
                   itemCount: _items.length,
                   itemBuilder: (context, index) {
                     final item = _items[index];
                     final isSelected = item.route == _currentRoute;
-                    return _buildMenuItem(item, isSelected);
+                    return _buildMenuItem(item, isSelected, theme);
                   },
                 ),
               ),
-              _buildThemeToggle(),
+              _buildThemeToggle(isDarkMode, theme),
             ],
           ),
         ),
@@ -102,9 +108,9 @@ class _SideBarState extends State<SideBar> with RouteAware {
               width: 32.w,
               height: 32.w,
               decoration: BoxDecoration(
-                color: const Color(0xFF40916C),
+                color: AppTheme.primaryColor,
                 border: Border.all(
-                  color: const Color(0xFF2D6A4F),
+                  color: AppTheme.primaryDarkColor,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(4.r),
@@ -128,7 +134,7 @@ class _SideBarState extends State<SideBar> with RouteAware {
                   child: Icon(
                     _isExpandedStatic ? Icons.chevron_left : Icons.chevron_right,
                     color: Colors.white,
-                    size: 20.sp,
+                    size: 16.sp,
                   ),
                 ),
               ),
@@ -139,7 +145,7 @@ class _SideBarState extends State<SideBar> with RouteAware {
     );
   }
 
-  Widget _buildMenuItem(_SideBarItem item, bool isSelected) {
+  Widget _buildMenuItem(_SideBarItem item, bool isSelected, ThemeData theme) {
     return InkWell(
       onTap: () {
         if (item.route != _currentRoute) {
@@ -150,31 +156,35 @@ class _SideBarState extends State<SideBar> with RouteAware {
         }
       },
       child: Container(
-        height: 48.h,
+        height: 44.h,
         margin: EdgeInsets.symmetric(
           horizontal: 8.w,
           vertical: 4.h,
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.white.withOpacity(0.1)
+              ? theme.colorScheme.primary.withOpacity(0.1)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(6.r),
         ),
         child: Row(
           children: [
             SizedBox(width: 16.w),
             Icon(
               isSelected ? item.selectedIcon : item.icon,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
-              size: 24.sp,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface.withOpacity(0.6),
+              size: 20.sp,
             ),
             if (_isExpandedStatic) ...[
-              SizedBox(width: 16.w),
+              SizedBox(width: 12.w),
               Text(
                 item.label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 14.sp,
                 ),
               ),
@@ -185,15 +195,18 @@ class _SideBarState extends State<SideBar> with RouteAware {
     );
   }
 
-  Widget _buildThemeToggle() {
+  Widget _buildThemeToggle(bool isDarkMode, ThemeData theme) {
     return Container(
-      height: 48.h,
+      height: 44.h,
       margin: EdgeInsets.all(8.w),
       child: IconButton(
-        icon: const Icon(Icons.dark_mode_outlined),
-        color: Colors.white.withOpacity(0.6),
+        icon: Icon(
+          isDarkMode ? Icons.light_mode : Icons.dark_mode,
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          size: 20.sp,
+        ),
         onPressed: () {
-          // TODO: 实现主题切换
+          ref.read(themeProvider.notifier).toggleTheme();
         },
       ),
     );
