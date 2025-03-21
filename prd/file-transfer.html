@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试工具 - 文件传输</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 64px;
+            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10;
+            transition: width 0.3s;
+        }
+        .sidebar:hover {
+            width: 200px;
+        }
+        .sidebar-item {
+            padding: 16px 0;
+            text-align: center;
+            color: #cbd5e0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .sidebar-item i {
+            font-size: 24px;
+        }
+        .sidebar-item span {
+            display: none;
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+        }
+        .sidebar:hover .sidebar-item span {
+            display: block;
+        }
+        .main-content {
+            margin-left: 64px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 20;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #4299e1;
+            background-color: rgba(66, 153, 225, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧菜单栏 -->
+    <div class="sidebar">
+        <div class="sidebar-item">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-list"></i>
+            <span>列表页</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-tools"></i>
+            <span>工具导航</span>
+        </div>
+        <div class="sidebar-item active">
+            <i class="fas fa-exchange-alt"></i>
+            <span>文件传输</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-terminal"></i>
+            <span>ADB控制台</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-cog"></i>
+            <span>设置</span>
+        </div>
+        <div class="theme-toggle">
+            <i class="fas fa-moon text-white"></i>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold">文件传输</h1>
+                <div class="flex space-x-2">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> 刷新
+                    </button>
+                    <button class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-folder-plus mr-2"></i> 新建文件夹
+                    </button>
+                </div>
+            </div>
+
+            <!-- 文件上传区域 -->
+            <div class="upload-area bg-white rounded-lg p-8 text-center mb-6">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-semibold mb-2">拖拽文件到此处或点击上传</h3>
+                <p class="text-gray-500 mb-4">支持所有类型文件，单个文件最大100MB</p>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition duration-300">
+                    选择文件
+                </button>
+            </div>
+
+            <!-- 文件列表 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                    <div class="flex space-x-4">
+                        <button class="text-gray-600 hover:text-gray-900"><i class="fas fa-th-large"></i></button>
+                        <button class="text-gray-600 hover:text-gray-900"><i class="fas fa-list"></i></button>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-gray-600 mr-2">排序方式:</span>
+                        <select class="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="name">名称</option>
+                            <option value="date">日期</option>
+                            <option value="size">大小</option>
+                            <option value="type">类型</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">大小</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">修改日期</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="far fa-file-alt text-gray-400 mr-3"></i>
+                                    <span class="text-sm text-gray-900">测试报告.pdf</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2.5 MB</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-15 14:30</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">PDF文档</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900"><i class="fas fa-download"></i></button>
+                                    <button class="text-green-600 hover:text-green-900"><i class="fas fa-share-alt"></i></button>
+                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="far fa-file-image text-gray-400 mr-3"></i>
+                                    <span class="text-sm text-gray-900">截图20231015.png</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1.2 MB</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-15 15:45</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900"><i class="fas fa-download"></i></button>
+                                    <button class="text-green-600 hover:text-green-900"><i class="fas fa-share-alt"></i></button>
+                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

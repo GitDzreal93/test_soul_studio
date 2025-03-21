@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试工具 - 列表页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 64px;
+            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10;
+            transition: width 0.3s;
+        }
+        .sidebar:hover {
+            width: 200px;
+        }
+        .sidebar-item {
+            padding: 16px 0;
+            text-align: center;
+            color: #cbd5e0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .sidebar-item i {
+            font-size: 24px;
+        }
+        .sidebar-item span {
+            display: none;
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+        }
+        .sidebar:hover .sidebar-item span {
+            display: block;
+        }
+        .main-content {
+            margin-left: 64px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧菜单栏 -->
+    <div class="sidebar">
+        <div class="sidebar-item">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </div>
+        <div class="sidebar-item active">
+            <i class="fas fa-list"></i>
+            <span>列表页</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-tools"></i>
+            <span>工具导航</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-exchange-alt"></i>
+            <span>文件传输</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-terminal"></i>
+            <span>ADB控制台</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-cog"></i>
+            <span>设置</span>
+        </div>
+        <div class="theme-toggle">
+            <i class="fas fa-moon text-white"></i>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold">测试设备列表</h1>
+                <div class="flex space-x-2">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> 刷新
+                    </button>
+                    <button class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-plus mr-2"></i> 添加设备
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 过滤器 -->
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center">
+                        <span class="text-gray-700 mr-2">平台:</span>
+                        <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全部</option>
+                            <option value="android">Android</option>
+                            <option value="ios">iOS</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-gray-700 mr-2">状态:</span>
+                        <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全部</option>
+                            <option value="online">在线</option>
+                            <option value="offline">离线</option>
+                            <option value="busy">忙碌</option>
+                        </select>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="relative">
+                            <input type="text" placeholder="搜索设备名称、ID或型号..." class="w-full border border-gray-300 rounded-md pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设备列表 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">设备</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">型号</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">系统版本</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP地址</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-blue-100 rounded-full">
+                                        <i class="fab fa-android text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">Pixel 6</div>
+                                        <div class="text-sm text-gray-500">IMEI: 352738495827364</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Google Pixel 6</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Android 12</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">在线</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">192.168.1.101</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900"><i class="fas fa-terminal"></i></button>
+                                    <button class="text-green-600 hover:text-green-900"><i class="fas fa-play"></i></button>
+                                    <button class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-info-circle"></i></button>
+                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-gray-100 rounded-full">
+                                        <i class="fab fa-apple text-gray-600 text-xl"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">iPhone 13</div>
+                                        <div class="text-sm text-gray-500">IMEI: 493726593847563</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apple iPhone 13</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">iOS 15.4</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">忙碌</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">192.168.1.102</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900"><i class="fas fa-terminal"></i></button>
+                                    <button class="text-green-600 hover:text-green-900"><i class="fas fa-play"></i></button>
+                                    <button class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-info-circle"></i></button>
+                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-blue-100 rounded-full">
+                                        <i class="fab fa-android text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">Galaxy S21</div>
+                                        <div class="text-sm text-gray-500">IMEI: 583927465928374</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Samsung Galaxy S21</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Android 12</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">离线</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">--</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900 opacity-50 cursor-not-allowed"><i class="fas fa-terminal"></i></button>
+                                    <button class="text-green-600 hover:text-green-900 opacity-50 cursor-not-allowed"><i class="fas fa-play"></i></button>
+                                    <button class="text-yellow-600 hover:text-yellow-900"><i class="fas fa-info-circle"></i></button>
+                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>

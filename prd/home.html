@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试工具 - 首页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 64px;
+            background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10;
+            transition: width 0.3s;
+        }
+        .sidebar:hover {
+            width: 200px;
+        }
+        .sidebar-item {
+            padding: 16px 0;
+            text-align: center;
+            color: #cbd5e0;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .sidebar-item i {
+            font-size: 24px;
+        }
+        .sidebar-item span {
+            display: none;
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+        }
+        .sidebar:hover .sidebar-item span {
+            display: block;
+        }
+        .main-content {
+            margin-left: 64px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧菜单栏 -->
+    <div class="sidebar">
+        <div class="sidebar-item active">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-list"></i>
+            <span>列表页</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-tools"></i>
+            <span>工具导航</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-exchange-alt"></i>
+            <span>文件传输</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-terminal"></i>
+            <span>ADB控制台</span>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-cog"></i>
+            <span>设置</span>
+        </div>
+        <div class="theme-toggle">
+            <i class="fas fa-moon text-white"></i>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold mb-6">测试工具控制中心</h1>
+            
+            <!-- 状态概览 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">系统状态</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-mobile-alt text-blue-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">已连接设备</p>
+                                <p class="text-xl font-bold">3</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">测试通过</p>
+                                <p class="text-xl font-bold">28</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-red-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-times-circle text-red-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">测试失败</p>
+                                <p class="text-xl font-bold">2</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-clock text-purple-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">运行时间</p>
+                                <p class="text-xl font-bold">3h 45m</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 快速操作 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-lg shadow-md p-6 card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">快速测试</h3>
+                        <i class="fas fa-vial text-blue-500 text-xl"></i>
+                    </div>
+                    <p class="text-gray-600 mb-4">启动预配置的测试套件，快速验证设备功能</p>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg w-full transition duration-300">
+                        开始测试
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">设备管理</h3>
+                        <i class="fas fa-mobile-alt text-green-500 text-xl"></i>
+                    </div>
+                    <p class="text-gray-600 mb-4">管理已连接的测试设备，查看设备状态</p>
+                    <button class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg w-full transition duration-300">
+                        管理设备
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">测试报告</h3>
+                        <i class="fas fa-chart-bar text-purple-500 text-xl"></i>
+                    </div>
+                    <p class="text-gray-600 mb-4">查看历史测试报告和分析数据</p>
+                    <button class="bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg w-full transition duration-300">
+                        查看报告
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 最近活动 -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">最近活动</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">设备</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">活动</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10:30 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Pixel 6</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">UI自动化测试</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">成功</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">09:45 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">iPhone 13</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">性能测试</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">进行中</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">09:15 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Galaxy S21</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">兼容性测试</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">失败</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">08:30 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Pixel 5</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">安装测试</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">成功</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
